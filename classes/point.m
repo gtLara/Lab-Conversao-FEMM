@@ -14,5 +14,16 @@ classdef point
         printf ("x: %.2f y: %.2f", p.x, p.y);
     endfunction
 
+    function s = plus(p1,p2)
+        s = point(0, 0);
+        s.x = p1.x + p2.x;
+        s.y = p1.y + p2.y;
+    endfunction
+
+    function q = mrdivide(p1, k)
+        q = point(0, 0);
+        q.x = p1.x/k;
+        q.y = p1.y/k;
+    endfunction
   endmethods
 endclassdef
