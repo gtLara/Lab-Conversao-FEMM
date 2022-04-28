@@ -31,11 +31,11 @@ I = 1 % A
 
 % geometria de armardura inferior
 
-a_i = 86;
+a_i = 8.6;
 b_i = a_i;
-c_i = 104;
-d_i = 46;
-e_i = 158;
+c_i = 10.4;
+d_i = 4.6;
+e_i = 15.8;
 f_i = a_i;
 
 % definindo pontos e ligando pontos por Nível
@@ -102,22 +102,22 @@ mi_clearselected;
 
 % distancia entre armaduras
 
-d_max = 70;
+d_max = 7;
 
 % geometria armadura superior
 
-a_s = 81;
+a_s = 8.1;
 b_s = a_s;
-c_s = 941;
-d_s = 50;
-e_s = 181;
+c_s = 9.41;
+d_s = 5.0;
+e_s = 18.1;
 f_s = a_s;
 
 % definindo pontos e ligando pontos por Nível
 
 % N1
 
-p23 = point(p1.x+12.5, p1.y+e_i+e_s+d_max);
+p23 = point(p1.x+1.25, p1.y+e_i+e_s+d_max);
 
 y_N1 = p23.y;
 
@@ -198,7 +198,7 @@ mi_addblocklabel(negative_circuit_label.x, negative_circuit_label.y);
 
 air_labels = {(p7+p8+p13+p14)/4, (p9+p10+p15+p16)/4, (p11+p12+p17+p18)/4}
 
-for i = 1:size(air_labels)(2)
+for i = 1:size(air_labels)(2)-1
     label = air_labels{i};
     mi_addblocklabel(label.x, label.y);
 end
@@ -228,7 +228,7 @@ mi_selectlabel(negative_circuit_label.x, negative_circuit_label.y);
 mi_setblockprop("16 AWG", 0, 0, "enrolamentos", 0, 1, -N);
 mi_clearselected;
 
-for i = 1:size(air_labels)(2)
+for i = 1:size(air_labels)(2)-1
     label = air_labels{i};
     mi_selectlabel(label.x, label.y);
 end
@@ -237,27 +237,33 @@ mi_clearselected;
 
 % criando condições de contorno
 
-input("Crie condição de contorno em interface gráfica: os resultados são mais confiáveis")
+input("Crie condicao de contorno em interface grafica: os resultados sao mais confiaveis")
 
 % nesse momento é necessário salvar o arquivo - isso não é possível via
 % máquina virtual e deve ser feito na mão.
 
-input("Salve o arquivo por meio do FEMM gráfico e dê ENTER para prosseguir.")
+input("Salve o arquivo por meio do FEMM grafico e de ENTER para prosseguir.")
 
-% TODO select all lower block labels and nodes, move, for loop, letsgo
-
+inductances = zeros(1, 6);
 mi_selectgroup(1);
-mi_movetranslate(x, y);
+mi_movetranslate(0, 1); % sobre 10 mm
 
 mi_analyze;
 mi_loadsolution;
 
-mi_groupselectblock(1) %
+for i = 0:5
 
-%etc
+    i=0;
+    mi_analyze;
+    mi_loadsolution;
 
-energy = mo_blockintegral(2); % magnetic field energy
-inductance = (2*energy)/(I^2);
-display(inductance);
+    mo_groupselectblock(1);
 
-% move parte inferior, repete cálculo
+    energy = mo_blockintegral(2); % magnetic field energy
+    inductance = (2*energy)/(I^2);
+    inductances(i+1) = inductance
+
+    mi_selectgroup(1);
+    mi_movetranslate(0, 1); % sobre 10 mm
+
+end
