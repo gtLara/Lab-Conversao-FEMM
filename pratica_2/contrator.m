@@ -1,3 +1,6 @@
+%TODO: add coils
+%TODO: simulate
+
 % adicionando caminho para classe point
 addpath("../classes") % se essa pasta não contiver point.m o script não funciona.
 addpath("../functions") % se essa pasta não contiver drawline.m o script não funciona.
@@ -176,9 +179,28 @@ for i = 1:size(air_labels)(1)
     mi_addblocklabel(label.x, label.y);
 end
 
-% criando materiais
+% adicionando materiais
+
+mi_getmaterial("Air");
+mi_getmaterial("M-15 Steel");
+
+% criando circuito
+
+mi_addcircprop("enrolamentos", 1.58, 1);
 
 % atribuindo materiais e propriedades
+
+for i = 1:size(air_labels)(1)
+    label = air_labels{i};
+    mi_selectlabel(label.x, label.y);
+end
+mi_setblockprop("Air", 0, 0, 0, 0, 1, 0); % all blocks belong to group 1
+mi_clearselected();
+
+mi_selectlabel(upper_label.x, upper_label.y);
+mi_selectlabel(lower_label.x, lower_label.y);
+mi_setblockprop("M-15 Steel", 0, 0, 0, 0, 1, 0); % all blocks belong to group 1
+mi_clearselected;
 
 % criando condições de contorno
 
