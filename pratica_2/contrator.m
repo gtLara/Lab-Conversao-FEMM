@@ -196,9 +196,9 @@ mi_addblocklabel(positive_circuit_label.x, positive_circuit_label.y);
 negative_circuit_label = (p16 + p10 + p11 + p17)/4;
 mi_addblocklabel(negative_circuit_label.x, negative_circuit_label.y);
 
-air_labels = {(p7+p8+p13+p14)/4, (p9+p10+p15+p16)/4, (p11+p12+p17+p18)/4}
+air_labels = {((p7+p13)/2)+point(-2, 0), ((p9+p10)/2)+point(0, .05)}
 
-for i = 1:size(air_labels)(2)-1
+for i = 1:size(air_labels)(2)
     label = air_labels{i};
     mi_addblocklabel(label.x, label.y);
 end
@@ -217,22 +217,23 @@ mi_addcircprop("enrolamentos", I, 1);
 
 mi_selectlabel(upper_label.x, upper_label.y);
 mi_selectlabel(lower_label.x, lower_label.y);
-mi_setblockprop("M-15 Steel", 0, 0, 0, 0, 1, 0); % all blocks belong to group 1
+mi_setblockprop("M-15 Steel", 0, 0, 0, 0, 3, 0); % all blocks belong to group 3
 mi_clearselected;
 
 mi_selectlabel(positive_circuit_label.x, positive_circuit_label.y);
-mi_setblockprop("16 AWG", 0, 0, "enrolamentos", 0, 1, N);
+mi_setblockprop("16 AWG", 0, 0, "enrolamentos", 0, 3, N);
 mi_clearselected;
 
 mi_selectlabel(negative_circuit_label.x, negative_circuit_label.y);
-mi_setblockprop("16 AWG", 0, 0, "enrolamentos", 0, 1, -N);
+mi_setblockprop("16 AWG", 0, 0, "enrolamentos", 0, 3, -N);
 mi_clearselected;
 
-for i = 1:size(air_labels)(2)-1
+for i = 1:size(air_labels)(2)
     label = air_labels{i};
     mi_selectlabel(label.x, label.y);
 end
-mi_setblockprop("Air", 0, 0, 0, 0, 1, 0); % all blocks belong to group 1
+
+mi_setblockprop("Air", 0, 0, 0, 0, 3, 0);
 mi_clearselected;
 
 % criando condições de contorno
@@ -245,25 +246,18 @@ input("Crie condicao de contorno em interface grafica: os resultados sao mais co
 input("Salve o arquivo por meio do FEMM grafico e de ENTER para prosseguir.")
 
 inductances = zeros(1, 6);
-mi_selectgroup(1);
-mi_movetranslate(0, 1); % sobre 10 mm
-
-mi_analyze;
-mi_loadsolution;
 
 for i = 0:5
 
-    i=0;
     mi_analyze;
     mi_loadsolution;
 
-    mo_groupselectblock(1);
-
-    energy = mo_blockintegral(2); % magnetic field energy
-    inductance = (2*energy)/(I^2);
-    inductances(i+1) = inductance
+    inductance = mo_getcircuitproperties("enrolamentos")(3);
+    inductances(i+1) = inductance;
 
     mi_selectgroup(1);
+    mi_selectgroup(3);
     mi_movetranslate(0, 1); % sobre 10 mm
+    mi_clearselected;
 
 end
