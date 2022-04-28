@@ -11,6 +11,14 @@ newdocument(0);
 
 mi_probdef(0, "millimeters", "planar", 1e-8, 0, 30);
 
+% numero de voltas
+
+N = 7838
+
+% corrente da simulação
+
+I = 1 % A
+
 % definindo geometria
 
 %      LEGENDA DE MEDIDAS
@@ -90,6 +98,7 @@ selectnode(p11);
 selectnode(p12);
 
 mi_setnodeprop("armadura_inferior", 1);
+mi_clearselected;
 
 % distancia entre armaduras
 
@@ -148,7 +157,7 @@ drawline(p17, p18);
 drawline(p17, p22);
 drawline(p18, p24);
 
-% definindo grupos de arestas de armadura inferior
+% definindo grupos de arestas de armadura superior
 
 selectnode(p13);
 selectnode(p14);
@@ -164,6 +173,14 @@ selectnode(p23);
 selectnode(p24);
 
 mi_setnodeprop("armadura_superior", 2);
+mi_clearselected;
+
+% definindo seção de enrolamentos
+
+drawline(p14, p8)
+drawline(p15, p9)
+drawline(p16, p10)
+drawline(p17, p11)
 
 % adicionando rótulos de materiais
 
@@ -173,8 +190,15 @@ mi_addblocklabel(upper_label.x, upper_label.y);
 lower_label = (p9 + p10 + p4 + p5)/4;
 mi_addblocklabel(lower_label.x, lower_label.y);
 
+positive_circuit_label = (p14 + p8 + p9 + p15)/4;
+mi_addblocklabel(positive_circuit_label.x, positive_circuit_label.y);
+
+negative_circuit_label = (p16 + p10 + p11 + p17)/4;
+mi_addblocklabel(negative_circuit_label.x, negative_circuit_label.y);
+
 air_labels = {(p7+p8+p13+p14)/4, (p9+p10+p15+p16)/4, (p11+p12+p17+p18)/4}
-for i = 1:size(air_labels)(1)
+
+for i = 1:size(air_labels)(2)
     label = air_labels{i};
     mi_addblocklabel(label.x, label.y);
 end
@@ -183,44 +207,57 @@ end
 
 mi_getmaterial("Air");
 mi_getmaterial("M-15 Steel");
+mi_getmaterial("16 AWG");
 
 % criando circuito
 
-mi_addcircprop("enrolamentos", 1.58, 1);
+mi_addcircprop("enrolamentos", I, 1);
 
 % atribuindo materiais e propriedades
-
-for i = 1:size(air_labels)(1)
-    label = air_labels{i};
-    mi_selectlabel(label.x, label.y);
-end
-mi_setblockprop("Air", 0, 0, 0, 0, 1, 0); % all blocks belong to group 1
-mi_clearselected();
 
 mi_selectlabel(upper_label.x, upper_label.y);
 mi_selectlabel(lower_label.x, lower_label.y);
 mi_setblockprop("M-15 Steel", 0, 0, 0, 0, 1, 0); % all blocks belong to group 1
 mi_clearselected;
 
+mi_selectlabel(positive_circuit_label.x, positive_circuit_label.y);
+mi_setblockprop("16 AWG", 0, 0, "enrolamentos", 0, 1, N);
+mi_clearselected;
+
+mi_selectlabel(negative_circuit_label.x, negative_circuit_label.y);
+mi_setblockprop("16 AWG", 0, 0, "enrolamentos", 0, 1, -N);
+mi_clearselected;
+
+for i = 1:size(air_labels)(2)
+    label = air_labels{i};
+    mi_selectlabel(label.x, label.y);
+end
+mi_setblockprop("Air", 0, 0, 0, 0, 1, 0); % all blocks belong to group 1
+mi_clearselected;
+
 % criando condições de contorno
 
-%input("Crie condição de contorno em interface gráfica: os resultados são mais confiáveis")
+input("Crie condição de contorno em interface gráfica: os resultados são mais confiáveis")
 
-%% nesse momento é necessário salvar o arquivo - isso não é possível via
-%% máquina virtual e deve ser feito na mão.
+% nesse momento é necessário salvar o arquivo - isso não é possível via
+% máquina virtual e deve ser feito na mão.
 
-%input("Salve o arquivo por meio do FEMM gráfico e dê ENTER para prosseguir.")
+input("Salve o arquivo por meio do FEMM gráfico e dê ENTER para prosseguir.")
 
-%mi_analyze;
-%mi_loadsolution;
+% TODO select all lower block labels and nodes, move, for loop, letsgo
 
-%mo_groupselectblock(1) % grupo parte superior do atrator
-%mo_groupselectblock(2) % grupo parte inferior do atrator
+mi_selectgroup(1);
+mi_movetranslate(x, y);
 
-%%etc
+mi_analyze;
+mi_loadsolution;
 
-%energy = mo_blockintegral(2); % magnetic field energy
-%inductance = (2*energy)/(I^2);
-%display(inductance);
+mi_groupselectblock(1) %
+
+%etc
+
+energy = mo_blockintegral(2); % magnetic field energy
+inductance = (2*energy)/(I^2);
+display(inductance);
 
 % move parte inferior, repete cálculo
