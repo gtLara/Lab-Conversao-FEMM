@@ -7,17 +7,20 @@ addpath("../functions") % se essa pasta não contiver drawline.m o script não f
 openfemm;
 newdocument(0);
 
-% definindo problema
+%gerando arquivo de curva BH
 
+run get_bh_curve.m
+
+% definindo problema
 mi_probdef(0, "millimeters", "planar", 1e-8, 0, 30);
 
 % numero de voltas
 
-N = 80
+N = 80;
 
 % corrente da simulação
 
-I = 1.5 % A
+I = 1; % A
 
 % definindo geometria
 
@@ -143,7 +146,7 @@ drawline(p13, p15);
 drawline(p14, p16);
 
 
-% material Labels 
+% material Labels
 upper_label = (p13 + p14 + p15 + p16)/4;
 mi_addblocklabel(upper_label.x, upper_label.y);
 
@@ -168,22 +171,21 @@ mi_addblocklabel(negative_circuit_label.x, negative_circuit_label.y);
 air_label = point((p1.x - 0.5), ((p7.y + p13.y)/2));
 mi_addblocklabel(air_label.x, air_label.y);
 
+% criando material
+input("Crie material");
+
 % adicionando materiais
 mi_getmaterial("Air");
-mi_getmaterial("FeSi");
+mi_getmaterial("nucleo");
 mi_getmaterial("18 AWG");
 
 % criando circuito
-
 mi_addcircprop("enrolamentos", I, 1);
 
 % atribuindo materiais e propriedades
-
-input("Crie um materal FeSi");
-
 mi_selectlabel(upper_label.x, upper_label.y);
 mi_selectlabel(lower_label.x, lower_label.y);
-mi_setblockprop("FeSi", 0, 0, 0, 0, 3, 0); % all blocks belong to group 3
+mi_setblockprop("nucleo", 0, 0, 0, 0, 3, 0); % all blocks belong to group 3
 mi_clearselected;
 
 mi_selectlabel(positive_circuit_label.x, positive_circuit_label.y);
@@ -202,32 +204,17 @@ mi_selectlabel(negative_paper_label.x, negative_paper_label.y);
 mi_setblockprop("Air", 0, 0, 0, 0, 3, 0);
 mi_clearselected;
 
-mi_selectlabel(positive_circuit_label.x, positive_circuit_label.y);
+mi_selectlabel(positive_paper_label.x, positive_paper_label.y);
 mi_setblockprop("Air", 0, 0, 0, 0, 3, 0);
 mi_clearselected;
 
-%% criando condições de contorno
-%
-%input("Crie condicao de contorno em interface grafica: os resultados sao mais confiaveis")
-%
-%% nesse momento é necessário salvar o arquivo - isso não é possível via
-%% máquina virtual e deve ser feito na mão.
-%
-%input("Salve o arquivo por meio do FEMM grafico e de ENTER para prosseguir.")
-%
-%inductances = zeros(1, 6);
-%
-%for i = 0:5
-%
-%    mi_analyze;
-%    mi_loadsolution;
-%
-%    inductance = mo_getcircuitproperties("enrolamentos")(3);
-%    inductances(i+1) = inductance;
-%
-%    mi_selectgroup(1);
-%    mi_selectgroup(3);
-%    mi_movetranslate(0, 1); % sobre 10 mm
-%    mi_clearselected;
-%
-%end
+% criando condições de contorno
+
+input("Crie condicao de contorno em interface grafica: os resultados sao mais confiaveis")
+
+input("Salve o arquivo por meio do FEMM grafico e de ENTER para prosseguir.")
+
+mi_analyze;
+mi_loadsolution;
+
+inductance = mo_getcircuitproperties("enrolamentos")(3); % must be adjusted if I!=1
