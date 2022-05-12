@@ -17,7 +17,7 @@ N = 7838
 
 % corrente da simulação
 
-I = 1 % A
+I = .082 % A
 
 % definindo geometria
 
@@ -82,6 +82,7 @@ drawline(p11, p6);
 drawline(p11, p12);
 drawline(p12, p2);
 
+
 % definindo grupos de arestas de armadura inferior
 
 selectnode(p1);
@@ -111,13 +112,13 @@ b_s = a_s;
 c_s = 9.41;
 d_s = 5.0;
 e_s = 18.1;
-f_s = a_s;
+f_s = a_i;
 
 % definindo pontos e ligando pontos por Nível
 
 % N1
 
-p23 = point(p1.x+1.25, p1.y+e_i+e_s+d_max);
+p23 = point(p1.x, p1.y+e_i+e_s+d_max);
 
 y_N1 = p23.y;
 
@@ -175,6 +176,7 @@ selectnode(p24);
 mi_setnodeprop("armadura_superior", 2);
 mi_clearselected;
 
+
 % definindo seção de enrolamentos
 
 drawline(p14, p8)
@@ -196,7 +198,7 @@ mi_addblocklabel(positive_circuit_label.x, positive_circuit_label.y);
 negative_circuit_label = (p16 + p10 + p11 + p17)/4;
 mi_addblocklabel(negative_circuit_label.x, negative_circuit_label.y);
 
-air_labels = {((p7+p13)/2)+point(-2, 0), ((p9+p10)/2)+point(0, .05)}
+air_labels = {((p7+p13)/2)+point(-5, 5), ((p9+p10)/2)+point(0, .05)}
 
 for i = 1:size(air_labels)(2)
     label = air_labels{i};
@@ -246,18 +248,33 @@ input("Crie condicao de contorno em interface grafica: os resultados sao mais co
 input("Salve o arquivo por meio do FEMM grafico e de ENTER para prosseguir.")
 
 inductances = zeros(1, 6);
+forces = zeros(1, 7);
 
-for i = 0:5
+for i = 1:7
 
     mi_analyze;
     mi_loadsolution;
 
-    inductance = mo_getcircuitproperties("enrolamentos")(3);
-    inductances(i+1) = inductance;
+    inductance = mo_getcircuitproperties("enrolamentos")(3)/I;
+    inductances(i) = inductance;
+
+    mo_selectpoint(p7.x, p7.y);
+    mo_selectpoint(p18.x, p18.y);
+    diagonal_force = mo_lineintegral(3)(2);
+
+    angle = atan(size(p18 - p12)/size(p12 - p7));
+
+    forces(i) = diagonal_force * cos(angle);
+
+    mo_clearcontour;
 
     mi_selectgroup(1);
     mi_selectgroup(3);
-    mi_movetranslate(0, 1); % sobre 10 mm
+    mi_movetranslate(0, 1); % sobe 1mm
+    mi_clearselected;
+
+    mi_selectgroup(4);
+    mi_movetranslate(0, 0.5); % sobe .5mm
     mi_clearselected;
 
 end
