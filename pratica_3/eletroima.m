@@ -9,18 +9,18 @@ newdocument(0);
 
 %gerando arquivo de curva BH
 
-run get_bh_curve.m
+%run get_bh_curve.m
 
 % definindo problema
-mi_probdef(0, "millimeters", "planar", 1e-8, 0, 30);
+mi_probdef(0, "millimeters", "planar", 1e-8, 37.6, 30);
 
 % numero de voltas
 
-N = 80;
+N = 67;
 
 % corrente da simulação
 
-I = 1; % A
+I = 2.5; % A
 
 % definindo geometria
 
@@ -217,4 +217,13 @@ input("Salve o arquivo por meio do FEMM grafico e de ENTER para prosseguir.")
 mi_analyze;
 mi_loadsolution;
 
-inductance = mo_getcircuitproperties("enrolamentos")(3); % must be adjusted if I!=1
+inductance = mo_getcircuitproperties("enrolamentos")(3)/I % must be adjusted if I!=1
+
+%force
+mo_selectpoint(p7.x, p7.y);
+mo_selectpoint(p14.x, p14.y);
+diagonal_force = mo_lineintegral(3)(2);
+angle = atan(size(p14 - p12)/size(p12 - p7));
+force = diagonal_force * cos(angle)
+mo_clearcontour;
+
