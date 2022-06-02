@@ -43,6 +43,7 @@ mi_addcircprop("core_windings", I, 1);
 %   Defining air label
 
 air_label = point(7.4, 0);
+air_label = point(17.4, 0);
 mi_addblocklabel(air_label.x, air_label.y);
 mi_selectlabel(air_label.x, air_label.y);
 mi_setblockprop("Air", 0, 0, 0, 0, 3, 0);
