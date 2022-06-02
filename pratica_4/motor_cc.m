@@ -16,8 +16,6 @@ N_interpole = 118;
 
 I = 1;
 
-% Defining geometry - not necessary, drawing already loaded
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,10 +40,12 @@ mi_addcircprop("core_windings", I, 1);
 
 %   Defining air label
 
-air_label = point(7.4, 0);
-air_label = point(17.4, 0);
-mi_addblocklabel(air_label.x, air_label.y);
-mi_selectlabel(air_label.x, air_label.y);
+air_label_inner = point(7.4, 0);
+air_label_outer = point(17.4, 0);
+mi_addblocklabel(air_label_inner.x, air_label_inner.y);
+mi_addblocklabel(air_label_outer.x, air_label_outer.y);
+mi_selectlabel(air_label_inner.x, air_label_inner.y);
+mi_selectlabel(air_label_outer.x, air_label_outer.y);
 mi_setblockprop("Air", 0, 0, 0, 0, 3, 0);
 mi_clearselected;
 
@@ -121,12 +121,20 @@ mi_clearselected;
 
 %       Core Circuit
 
-core_circuit_1_label = point(6.32, 0);
-mi_addblocklabel(core_circuit_1_label.x, core_circuit_1_label.y);
-mi_selectlabel(core_circuit_1_label.x, core_circuit_1_label.y);
-mi_setblockprop("14 AWG", 0, 0, 0, "core_circuit", 3, 1);
-mi_copyrotate2(0, 0, 45, 7, 2);
+core_circuit_positive_label = point(6.32, 0);
+mi_addblocklabel(core_circuit_positive_label.x, core_circuit_positive_label.y);
+mi_selectlabel(core_circuit_positive_label.x, core_circuit_positive_label.y);
+mi_setblockprop("14 AWG", 0, 0, "core_circuit", 0, 3, 1);
+mi_copyrotate2(0, 0, 45, 3, 2);
 mi_clearselected;
+
+core_circuit_negative_label = point(-6.32, 0);
+mi_addblocklabel(core_circuit_negative_label.x, core_circuit_negative_label.y);
+mi_selectlabel(core_circuit_negative_label.x, core_circuit_negative_label.y);
+mi_setblockprop("14 AWG", 0, 0, "core_circuit", 0, 3, -1);
+mi_copyrotate2(0, 0, 45, 3, 2);
+mi_clearselected;
+
 
 % Core
 
