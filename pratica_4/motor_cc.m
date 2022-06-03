@@ -124,14 +124,14 @@ mi_clearselected;
 core_circuit_positive_label = point(6.32, 0);
 mi_addblocklabel(core_circuit_positive_label.x, core_circuit_positive_label.y);
 mi_selectlabel(core_circuit_positive_label.x, core_circuit_positive_label.y);
-mi_setblockprop("14 AWG", 0, 0, "core_circuit", 0, 3, 1);
+mi_setblockprop("18 AWG", 0, 0, "core_circuit", 0, 3, 1);
 mi_copyrotate2(0, 0, 45, 3, 2);
 mi_clearselected;
 
 core_circuit_negative_label = point(-6.32, 0);
 mi_addblocklabel(core_circuit_negative_label.x, core_circuit_negative_label.y);
 mi_selectlabel(core_circuit_negative_label.x, core_circuit_negative_label.y);
-mi_setblockprop("14 AWG", 0, 0, "core_circuit", 0, 3, -1);
+mi_setblockprop("18 AWG", 0, 0, "core_circuit", 0, 3, -1);
 mi_copyrotate2(0, 0, 45, 3, 2);
 mi_clearselected;
 
@@ -172,4 +172,4 @@ series_field_inductance = mo_getcircuitproperties("series_field_windings")(3)/I
 parallel_field_inductance = mo_getcircuitproperties("parallel_field_windings")(3)/I
 interpole_inductance = mo_getcircuitproperties("interpole_windings")(3)/I
 
-% Torque: how?
+% Torque: fazer na mão !
