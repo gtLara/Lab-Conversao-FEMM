@@ -2,18 +2,20 @@ addpath("../classes"); % se essa pasta não contiver point.m o script não funci
 addpath("../functions"); % se essa pasta não contiver drawline.m o script não funciona.
 openfemm;
 newdocument(0);
-opendocument("maquina_CC.FEM") % carrega desenho
+opendocument("/home/gala/2022-1/lconv/femm/pratica_4/maquina_CC.FEM") % carrega desenho
 
 % probdef:
 
 % Defining number of turns
 
-N_series_field = 23;
-N_parallel_field = 3700;
-N_interpole = 118;
+N_series_field = 10000;
+N_parallel_field = 91;
+N_interpole = 2570;
+N_core = 8;
 
 % Defining current
 
+I_armature = 18.2;
 I = 1;
 
 
@@ -31,7 +33,7 @@ mi_addmaterial("Iron", mu_x=500, mu_y=500);
 mi_addcircprop("series_field_windings", I, 1);
 mi_addcircprop("parallel_field_windings", I, 1);
 mi_addcircprop("interpole_windings", I, 1);
-mi_addcircprop("core_windings", I, 1);
+mi_addcircprop("core_windings", I_armature, 1);
 
 %%%%%%%%%%%%%%%%%%%%%%
 % Defining Labels    %
@@ -76,14 +78,14 @@ series_field_circuit_positive_label = point(-3.8, 11.5);
 mi_addblocklabel(series_field_circuit_positive_label.x, series_field_circuit_positive_label.y);
 mi_selectlabel(series_field_circuit_positive_label.x, series_field_circuit_positive_label.y);
 mi_setblockprop("18 AWG", 0, 0, "series_field_windings", 0, 3, N_series_field);
-mi_copyrotate2(0, 0, 180, 1, 2);
+mi_copytranslate2(0, -23, 1, 2);
 mi_clearselected;
 
 series_field_circuit_negative_label = point(+3.8, 11.5);
 mi_addblocklabel(series_field_circuit_negative_label.x, series_field_circuit_negative_label.y);
 mi_selectlabel(series_field_circuit_negative_label.x, series_field_circuit_negative_label.y);
 mi_setblockprop("18 AWG", 0, 0, "series_field_windings", 0, 3, -N_series_field);
-mi_copyrotate2(0, 0, 180, 1, 2);
+mi_copytranslate2(0, -23, 1, 2);
 mi_clearselected;
 
 %       Parallel field circuit
@@ -92,14 +94,14 @@ parallel_field_circuit_positive_label = point(11.5, -3.8);
 mi_addblocklabel(parallel_field_circuit_positive_label.x, parallel_field_circuit_positive_label.y);
 mi_selectlabel(parallel_field_circuit_positive_label.x, parallel_field_circuit_positive_label.y);
 mi_setblockprop("18 AWG", 0, 0, "parallel_field_windings", 0, 3, N_parallel_field);
-mi_copyrotate2(0, 0, 180, 1, 2);
+mi_copytranslate2(-23, 0, 1, 2);
 mi_clearselected;
 
 parallel_field_circuit_negative_label = point(11.5, 3.8);
 mi_addblocklabel(parallel_field_circuit_negative_label.x, parallel_field_circuit_negative_label.y);
 mi_selectlabel(parallel_field_circuit_negative_label.x, parallel_field_circuit_negative_label.y);
 mi_setblockprop("18 AWG", 0, 0, "parallel_field_windings", 0, 3, -N_parallel_field);
-mi_copyrotate2(0, 0, 180, 1, 2);
+mi_copytranslate2(-23, 0, 1, 2);
 mi_clearselected;
 
 %       Interpole circuit
@@ -108,29 +110,39 @@ interpole_circuit_positive_label = point(8, 10);
 mi_addblocklabel(interpole_circuit_positive_label.x, interpole_circuit_positive_label.y);
 mi_selectlabel(interpole_circuit_positive_label.x, interpole_circuit_positive_label.y);
 mi_setblockprop("18 AWG", 0, 0, "interpole_windings", 0, 3, N_interpole);
-mi_copyrotate2(0, 0, 90, 3, 2);
+mi_copyrotate2(0, 0, 90, 1, 2);
+mi_selectlabel(interpole_circuit_positive_label.x, interpole_circuit_positive_label.y);
+mi_copytranslate2(-18, -18, 1, 2);
 mi_clearselected;
 
 interpole_circuit_negative_label = point(10, 8);
 mi_addblocklabel(interpole_circuit_negative_label.x, interpole_circuit_negative_label.y);
 mi_selectlabel(interpole_circuit_negative_label.x, interpole_circuit_negative_label.y);
 mi_setblockprop("18 AWG", 0, 0, "interpole_windings", 0, 3, -N_interpole);
-mi_copyrotate2(0, 0, 90, 3, 2);
+mi_copyrotate2(0, 0, 90, 1, 2);
+mi_selectlabel(interpole_circuit_negative_label.x, interpole_circuit_negative_label.y);
+mi_copytranslate2(-18, -18, 1, 2);
 mi_clearselected;
+
+% final translation
+
+mi_selectlabel(interpole_circuit_positive_label.x-15, interpole_circuit_positive_label.y);
+mi_selectlabel(interpole_circuit_negative_label.x-20, interpole_circuit_negative_label.y);
+mi_copytranslate2(+18, -18, 1, 2);
 
 %       Core Circuit
 
-core_circuit_positive_label = point(6.32, 0);
+core_circuit_positive_label = point(4.5, 4.5);
 mi_addblocklabel(core_circuit_positive_label.x, core_circuit_positive_label.y);
 mi_selectlabel(core_circuit_positive_label.x, core_circuit_positive_label.y);
-mi_setblockprop("18 AWG", 0, 0, "core_windings", 0, 3, 1);
+mi_setblockprop("18 AWG", 0, 0, "core_windings", 0, 3, N_core);
 mi_copyrotate2(0, 0, 45, 3, 2);
 mi_clearselected;
 
-core_circuit_negative_label = point(-6.32, 0);
+core_circuit_negative_label = point(-4.5, -4.5);
 mi_addblocklabel(core_circuit_negative_label.x, core_circuit_negative_label.y);
 mi_selectlabel(core_circuit_negative_label.x, core_circuit_negative_label.y);
-mi_setblockprop("18 AWG", 0, 0, "core_windings", 0, 3, -1);
+mi_setblockprop("18 AWG", 0, 0, "core_windings", 0, 3, -N_core);
 mi_copyrotate2(0, 0, 45, 3, 2);
 mi_clearselected;
 
