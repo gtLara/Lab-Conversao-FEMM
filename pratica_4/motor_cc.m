@@ -2,7 +2,7 @@ addpath("../classes"); % se essa pasta não contiver point.m o script não funci
 addpath("../functions"); % se essa pasta não contiver drawline.m o script não funciona.
 openfemm;
 newdocument(0);
-opendocument("/home/gala/2022-1/lconv/femm/pratica_4/maquina_CC.FEM") % carrega desenho
+opendocument("maquina_CC.FEM") % carrega desenho
 
 % probdef:
 
@@ -25,7 +25,6 @@ I = 1;
 
 
 mi_getmaterial("Air");
-mi_getmaterial("14 AWG");
 mi_getmaterial("18 AWG");
 mi_addmaterial("Iron", mu_x=500, mu_y=500);
 
@@ -124,14 +123,14 @@ mi_clearselected;
 core_circuit_positive_label = point(6.32, 0);
 mi_addblocklabel(core_circuit_positive_label.x, core_circuit_positive_label.y);
 mi_selectlabel(core_circuit_positive_label.x, core_circuit_positive_label.y);
-mi_setblockprop("18 AWG", 0, 0, "core_circuit", 0, 3, 1);
+mi_setblockprop("18 AWG", 0, 0, "core_windings", 0, 3, 1);
 mi_copyrotate2(0, 0, 45, 3, 2);
 mi_clearselected;
 
 core_circuit_negative_label = point(-6.32, 0);
 mi_addblocklabel(core_circuit_negative_label.x, core_circuit_negative_label.y);
 mi_selectlabel(core_circuit_negative_label.x, core_circuit_negative_label.y);
-mi_setblockprop("18 AWG", 0, 0, "core_circuit", 0, 3, -1);
+mi_setblockprop("18 AWG", 0, 0, "core_windings", 0, 3, -1);
 mi_copyrotate2(0, 0, 45, 3, 2);
 mi_clearselected;
 
